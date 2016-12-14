@@ -16,16 +16,18 @@ public class RMQSender {
         factory.setHost("localhost");
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
+        Map<String, Object> arg = new HashMap<String, Object>();
+        arg.put("x-max-length", 10);
 
-
-        channel.queueDeclare("MyQeue", false, false, false, null);
+        channel.queueDeclare("LimitedQeue", false, false, false, arg);
         int loop = Integer.parseInt(args[0]);
         for(; loop >= 0; loop--) {
             String message = "Hello #" + loop;
-            channel.basicPublish("", "MyQeue", null, message.getBytes());
+            channel.basicPublish("", "LimitedQeue", null, message.getBytes());
             System.out.println("Sent: '" + message + "'");
         }
         channel.close();
         connection.close();
-    }    
+    }
+    
 }
